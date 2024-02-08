@@ -427,8 +427,10 @@ function checkCollisions() {
                 break;
             } else {
                 // Reseteo de posición para el jugador
-                player.x = 350;
-                player.y = 270;
+                if (score>=100){
+                    player.x = 350;
+                    player.y = 270;
+                }
                 score = Math.max(0, score - 1);
 
                 // Restablecer el contador de tiempo cuando el jugador es golpeado
