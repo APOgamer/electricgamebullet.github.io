@@ -427,7 +427,7 @@ function checkCollisions() {
                 break;
             } else {
                 // Reseteo de posición para el jugador
-                if (score>=100){
+                if (score>=1000){
                     player.x = 350;
                     player.y = 270;
                 }
@@ -540,7 +540,7 @@ function resetGame() {
 }
 // Iniciar el bucle del juego
 function gameLoop() {
-    if (score >= 100 || !gameActive) {
+    if (score >= 1000 || !gameActive) {
         showSurvivalScreen();
         backgroundMusic.pause();
         return; // Detener el bucle del juego cuando alcanzas 10000 puntos o gameActive es falso
