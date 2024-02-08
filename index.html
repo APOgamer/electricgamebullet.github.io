@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectricGameBullet</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+        }
+
+        canvas {
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script src="logic.js"></script>
+</body>
+<audio id="backgroundMusic" loop>
+    <source src="sounds/backgroundMusic.mp3" type="audio/mp3">
+    Tu navegador no soporta la etiqueta de audio.
+</audio>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // Agregar un evento 'keydown' para intentar reproducir la música al presionar cualquier tecla
+        document.addEventListener('keydown', playAudio);
+
+        function playAudio() {
+            // Eliminar el evento 'keydown' para que no se dispare nuevamente
+            document.removeEventListener('keydown', playAudio);
+
+            // Intentar reproducir la música
+            backgroundMusic.play().then(() => {
+                // La reproducción fue exitosa
+                console.log('Reproducción de música iniciada');
+            }).catch(error => {
+                // La reproducción automática no está permitida, maneja el error según sea necesario
+                console.error('Reproducción automática no permitida:', error);
+            });
+        }
+    });
+
+    // Resto de tu código
+</script>
+</html>
