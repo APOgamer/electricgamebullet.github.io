@@ -538,7 +538,7 @@ function resetGame() {
 }
 // Iniciar el bucle del juego
 function gameLoop() {
-    if (score >= 10 || !gameActive) {
+    if (score >= 100 || !gameActive) {
         showSurvivalScreen();
         backgroundMusic.pause();
         return; // Detener el bucle del juego cuando alcanzas 10000 puntos o gameActive es falso
