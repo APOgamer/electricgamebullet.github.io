@@ -12,11 +12,61 @@ const shootSound = new Audio('sounds/shoot.mp3');
 const enemyHitSound = new Audio('sounds/bullethit.mp3');
 const defeatSound = new Audio('sounds/defeat.mp3');
 const timestopSound = new Audio('sounds/time.mp3');
+let isGamePaused = false;
+let verificador= 1;
+function pauseGame() {
+    isGamePaused = true;
+}
 
-// Reproducir música al cargar la página
+function resumeGame() {
+    isGamePaused = false;
+    gameLoop();  // Reinicia el bucle del juego
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     backgroundMusic.play();
+
 });
+// Se mueve este bloque de código al final o dentro del evento DOMContentLoaded
+const consoleInput = document.getElementById('input');
+const consoleOutput = document.getElementById('output');
+
+// Agregar un evento 'keydown' para manejar la entrada de la consola
+consoleInput.addEventListener('keydown', handleConsoleInput);
+
+function handleConsoleInput(event) {
+    if (event.key === 'Enter') {
+        const inputText = consoleInput.value.toLowerCase();
+        // Procesar el comando utilizando la función del nuevo archivo
+        const response = processCommand(inputText);
+        consoleOutput.innerHTML += `<p>${inputText}</p>`;
+        consoleOutput.innerHTML += `<p>${response}</p>`;
+
+        // Limpiar el área de entrada
+        consoleInput.value = '';
+
+        // Detener el juego si el comando es "pausar"
+        if (inputText === 'pause') {
+            isGamePaused = true;
+            showPauseScreen(); // Mostrar pantalla de pausa
+            backgroundMusic.pause();
+        }
+
+        // Reanudar el juego solo si el comando es "continue"
+        if (inputText === 'continue') {
+            gameActive = true;
+            hidePauseScreen(); // Ocultar pantalla de pausa
+            backgroundMusic.play();
+            // Reiniciar el bucle del juego
+            gameLoop();
+        }
+    }
+}
+
+
+
+
 let timeCounter = 0;  // Agregamos un contador de tiempo
 let canShoot = true; // Variable para controlar si se puede disparar
 // Nuevas variables para la habilidad de detener el tiempo
@@ -551,22 +601,23 @@ function gameLoop() {
     if (score >= 1000 || !gameActive) {
         showSurvivalScreen();
         backgroundMusic.pause();
-        return; // Detener el bucle del juego cuando alcanzas 10000 puntos o gameActive es falso
-    }
-    else if (score > 0) {
-        adjustPlayerPosition(); // Llamada a la nueva función para ajustar la posición del jugador
-        updateBulletCooldown();
-        moveEntities();
-        moveExplosionParticles();
-        moveBullets();
-        checkCollisions();
-        drawGame();
-        drawExplosionParticles();
-        drawBullets();
-        updateTimer();
-        updateIntelligentEnemy();
+        return; // Detener el bucle del juego cuando alcanzas 10000 puntos, gameActive es falso o el juego está pausado
+    } else if (score > 0) {
+        if (!isGamePaused) {  // Solo ejecutar el juego si no está pausado
+            adjustPlayerPosition();
+            updateBulletCooldown();
+            moveEntities();
+            moveExplosionParticles();
+            moveBullets();
+            checkCollisions();
+            drawGame();
+            drawExplosionParticles();
+            drawBullets();
+            updateTimer();
+            updateIntelligentEnemy();
+            updateSuperEnemies();
+        }
         requestAnimationFrame(gameLoop);
-        updateSuperEnemies();
     } else {
         // Muestra la pantalla de pérdida
         ctx.fillStyle = '#000';
