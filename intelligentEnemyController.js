@@ -121,7 +121,7 @@ class EnemyBullet {
 // Función para actualizar enemigos inteligentes
 function updateIntelligentEnemy() {
     // Lógica para generar y actualizar enemigos inteligentes (SuperIntelligentEnemy)
-    if (superIntelligentEnemies.length === 0 && score >= 1) {
+    if (superIntelligentEnemies.length === 0 && score >= 500) {
         // Crear un nuevo SuperIntelligentEnemy cuando no hay ninguno en el juego
         const newEnemy = new SuperIntelligentEnemy(
             Math.random() * canvas.width,
