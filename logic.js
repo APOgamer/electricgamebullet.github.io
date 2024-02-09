@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const bullets = [];
@@ -408,6 +407,7 @@ function checkCollisions() {
             player.y < entity.y + entity.height &&
             player.y + player.height > entity.y
         ) {
+            // Resto del código para manejar colisiones del jugador
             if (entity.type === 'skill') {
                 // Eliminar la habilidad
                 entities.splice(i, 1);
@@ -444,6 +444,7 @@ function checkCollisions() {
         }
     }
 }
+
 
 
 
@@ -563,6 +564,7 @@ function gameLoop() {
         drawExplosionParticles();
         drawBullets();
         updateTimer();
+        updateIntelligentEnemy();
         requestAnimationFrame(gameLoop);
         updateSuperEnemies();
     } else {

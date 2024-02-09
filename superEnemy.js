@@ -116,13 +116,17 @@ function checkSuperEnemyCollision() {
     }
 }
 
-// Llamar a esta función en tu gameloop
+let lastSuperEnemyScore = 0;
 function updateSuperEnemies() {
-    if (superEnemies.length === 0 && score%100===0) {
+    const multiple = 200;
+
+    if (score >= multiple && Math.floor(score / multiple) > lastSuperEnemyScore) {
         createSuperEnemy();
+        lastSuperEnemyScore = Math.floor(score / multiple); // Actualizar el último múltiplo de 200 alcanzado
     }
 
     moveSuperEnemies();
     drawSuperEnemies();
     checkSuperEnemyCollision();
 }
+
