@@ -1,9 +1,10 @@
-// superEnemy.js
+// Nuevas variables relacionadas con los superEnemies
 const superEnemies = [];
-const superEnemySize = 50;
-const superEnemySpeedX = 5; // Velocidad horizontal
-let superEnemySpeedY = 5; // Velocidad vertical (inicial)
+const superEnemySize = 160;
+let superEnemySpeedX = 2; // Velocidad horizontal
+let superEnemySpeedY = 2; // Velocidad vertical (inicial)
 
+// Funciones relacionadas con los superEnemies
 function createSuperEnemy() {
     const superEnemy = {
         x: 0,
@@ -25,6 +26,9 @@ function moveSuperEnemies() {
         // Rebotar en los bordes horizontales
         if (superEnemy.x + superEnemy.width > canvas.width || superEnemy.x < 0) {
             superEnemySpeedX *= -1;
+
+            // Ajustar la posición para evitar que desaparezca (puedes ajustar este valor según sea necesario)
+            superEnemy.x = Math.min(canvas.width - superEnemy.width, Math.max(0, superEnemy.x));
         }
 
         // Rebotar en los bordes verticales
@@ -46,23 +50,20 @@ function drawSuperEnemies() {
     }
 }
 
-function handleBulletCollision(superEnemy) {
-    // Crear nuevas balas rojas
-    const redBullets = [];
-    for (let i = 0; i < 5; i++) {
-        const redBullet = {
-            x: superEnemy.x + superEnemy.width / 2,
-            y: superEnemy.y + superEnemy.height / 2,
-            radius: 5,
-            color: 'red',
-            speedX: (Math.random() - 0.5) * 5,
-            speedY: Math.random() * 5 + 2,
-        };
-        redBullets.push(redBullet);
+function handlePlayerCollision(superEnemy) {
+    // Reducir el puntaje al colisionar con el jugador
+    score -= 1;
+
+    // Empujar al jugador con una animación
+    const pushSpeed = 5;
+    if (player.x < superEnemy.x) {
+        player.x -= pushSpeed;
+    } else {
+        player.x += pushSpeed;
     }
 
-    // Agregar las nuevas balas al arreglo de balas
-    bullets.push(...redBullets);
+    // Puedes ajustar el empuje vertical según sea necesario
+    player.y += pushSpeed / 2;
 }
 
 function checkSuperEnemyCollision() {
@@ -78,19 +79,46 @@ function checkSuperEnemyCollision() {
                 bullet.y < superEnemy.y + superEnemy.height &&
                 bullet.y + bullet.radius > superEnemy.y
             ) {
-                if (superEnemy.canBounce) {
-                    handleBulletCollision(superEnemy);
+                // Eliminar la bala
+                bullets.splice(j, 1);
+
+                // Aumentar el puntaje al eliminar un superEnemy con una bala
+                score += 5;
+
+                // Reducir tamaño del superEnemy y verificar si ha recibido 5 balas
+                superEnemy.width *= 0.8;
+                superEnemy.height *= 0.8;
+
+                if (superEnemy.width < superEnemySize / 5) {
+                    // Si el superEnemy se hace demasiado pequeño, eliminarlo
                     superEnemies.splice(i, 1);
-                    score -= 10; // Reducir el puntaje al colisionar con el superEnemy
+
+                    // Reproducir sonido de impacto contra enemigo
+                    if (enemyHitSound) {
+                        enemyHitSound.playbackRate = 8;  // Ajusta el valor según sea necesario (2 sería el doble de rápido)
+                        enemyHitSound.play();
+                    }
                 }
+
+                break; // Salir del bucle interno, ya que la bala solo puede colisionar con un superEnemy a la vez
             }
+        }
+
+        // Verificar colisión con el jugador
+        if (
+            player.x < superEnemy.x + superEnemy.width &&
+            player.x + player.width > superEnemy.x &&
+            player.y < superEnemy.y + superEnemy.height &&
+            player.y + player.height > superEnemy.y
+        ) {
+            handlePlayerCollision(superEnemy);
         }
     }
 }
 
 // Llamar a esta función en tu gameloop
 function updateSuperEnemies() {
-    if (score >= 100 && score % 100 === 0 && superEnemies.length === 0) {
+    if (superEnemies.length === 0 && score%100===0) {
         createSuperEnemy();
     }
 
