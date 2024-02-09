@@ -8,49 +8,105 @@
         body {
             margin: 0;
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Centrar horizontalmente */
             align-items: center;
             height: 100vh;
             background-color: #222;
+            transform: scale(1.5); /* Zoom del 150% */
+            transform-origin: center center; /* Centro de la pantalla como origen del zoom */
+            overflow: hidden; /* Deshabilitar scroll vertical y horizontal en el body */
+        }
+
+        #container {
+            display: flex;
+            align-items: center; /* Centrar verticalmente */
+            overflow: hidden; /* Deshabilitar scroll vertical y horizontal en el container */
         }
 
         canvas {
             border: 2px solid #fff;
+            margin-right: 10px; /* Agregar un margen a la derecha del canvas */
+        }
+
+        #console {
+            width: 300px; /* Ancho de la columna de la consola */
+            height: 400px;
+            overflow: auto; /* Permitir desplazamiento vertical si hay demasiados mensajes */
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px; /* Tamaño del texto */
+        }
+
+        #input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            margin-top: 10px;
+            color: #fff;
+            background-color: #444;
+            border: 1px solid #666;
+            font-size: 16px; /* Tamaño del texto en el input */
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    
+    <div id="container">
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+        
+        <div id="console">
+            <div id="output"></div>
+            <input id="input" type="text" placeholder="Escribe aquí help para más...">
+        </div>
+    </div>
+    <!-- Agregar enlaces a los sonidos y otros elementos según sea necesario -->
+    <script src="pauseScreen.js"></script>
+    <script src="gameCommands.js"></script>    
     <script src="intelligentEnemyController.js"></script>
     <script src="superEnemy.js"></script>
     <script src="logic.js"></script>
+
+    <audio id="backgroundMusic" loop>
+        <source src="sounds/backgroundMusic.mp3" type="audio/mp3">
+        Tu navegador no soporta la etiqueta de audio.
+    </audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            const consoleInput = document.getElementById('input');
+            const consoleOutput = document.getElementById('output');
+
+            // Agregar un evento 'keydown' para manejar la entrada de la consola
+            consoleInput.addEventListener('keydown', handleConsoleInput);
+
+            function handleConsoleInput(event) {
+                if (event.key === 'Enter') {
+                    const inputText = consoleInput.value;
+                    consoleOutput.innerHTML += `<p>${inputText}</p>`;
+                    // Aquí puedes procesar la entrada y realizar acciones según sea necesario
+
+                    // Limpiar el área de entrada
+                    consoleInput.value = '';
+                }
+            }
+
+            // Agregar un evento 'keydown' para intentar reproducir la música al presionar cualquier tecla
+            document.addEventListener('keydown', playAudio);
+
+            function playAudio() {
+                // Eliminar el evento 'keydown' para que no se dispare nuevamente
+                document.removeEventListener('keydown', playAudio);
+
+                // Intentar reproducir la música
+                backgroundMusic.play().then(() => {
+                    // La reproducción fue exitosa
+                    console.log('Reproducción de música iniciada');
+                }).catch(error => {
+                    // La reproducción automática no está permitida, maneja el error según sea necesario
+                    console.error('Reproducción automática no permitida:', error);
+                });
+            }
+        });
+    </script>
 </body>
-<audio id="backgroundMusic" loop>
-    <source src="sounds/backgroundMusic.mp3" type="audio/mp3">
-    Tu navegador no soporta la etiqueta de audio.
-</audio>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const backgroundMusic = document.getElementById('backgroundMusic');
-
-        // Agregar un evento 'keydown' para intentar reproducir la música al presionar cualquier tecla
-        document.addEventListener('keydown', playAudio);
-
-        function playAudio() {
-            // Eliminar el evento 'keydown' para que no se dispare nuevamente
-            document.removeEventListener('keydown', playAudio);
-
-            // Intentar reproducir la música
-            backgroundMusic.play().then(() => {
-                // La reproducción fue exitosa
-                console.log('Reproducción de música iniciada');
-            }).catch(error => {
-                // La reproducción automática no está permitida, maneja el error según sea necesario
-                console.error('Reproducción automática no permitida:', error);
-            });
-        }
-    });
-
-</script>
 </html>
