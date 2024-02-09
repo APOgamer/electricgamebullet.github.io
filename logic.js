@@ -397,7 +397,7 @@ function checkCollisions() {
                     enemyHitSound.playbackRate = 8;  // Ajusta el valor según sea necesario (2 sería el doble de rápido)
                     enemyHitSound.play();
                 }
-                
+
                 break; // Salir del bucle interno, ya que la bala solo puede colisionar con una entidad a la vez
             }
         }
@@ -427,18 +427,24 @@ function checkCollisions() {
                 break;
             } else {
                 // Reseteo de posición para el jugador
-                if (score>=1000){
+                if (score >= 1000) {
                     player.x = 350;
                     player.y = 270;
                 }
-                score = Math.max(0, score - 1);
+
+                // Actualizar el puntaje y reiniciar el contador de tiempo solo si el puntaje disminuye a 0
+                if (score > 0) {
+                    score = Math.max(0, score - 1);
+                    //timeCounter = 0;
+                }
 
                 // Restablecer el contador de tiempo cuando el jugador es golpeado
-                timeCounter = 0;
+                //timeCounter = 0;
             }
         }
     }
 }
+
 
 
 function updateTimer() {
@@ -505,18 +511,19 @@ function showSurvivalScreen() {
     // Guardar el récord si es un nuevo récord
     const currentRecord = { time: timeCounter, score: score };
     highScores.push(currentRecord);
-    highScores.sort((a, b) => b.score - a.score); // Ordenar de mayor a menor puntuación
+    highScores.sort((a, b) => a.time - b.time || b.score - a.score); // Ordenar por tiempo ascendente y puntaje descendente
 
     // Mostrar solo los 3 mejores registros
+    const topScores = highScores.slice(0, 3);
     ctx.fillText('Mejores Registros:', canvas.width / 2 - 150, canvas.height / 2 + 90);
-    const numTopScores = Math.min(3, highScores.length);
-    for (let i = 0; i < numTopScores; i++) {
-        ctx.fillText((i + 1) + '. Tiempo: ' + highScores[i].time + ', Puntaje: ' + highScores[i].score, canvas.width / 2 - 150, canvas.height / 2 + 130 + i * 40);
+    for (let i = 0; i < topScores.length; i++) {
+        ctx.fillText((i + 1) + '. Tiempo: ' + topScores[i].time + ', Puntaje: ' + topScores[i].score, canvas.width / 2 - 150, canvas.height / 2 + 130 + i * 40);
     }
 
     ctx.fillText('Presiona "r" para reiniciar', canvas.width / 2 - 150, canvas.height / 2 + 250);
     gameActive = false;
 }
+
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'r' && !gameActive) {
@@ -557,6 +564,7 @@ function gameLoop() {
         drawBullets();
         updateTimer();
         requestAnimationFrame(gameLoop);
+        updateSuperEnemies();
     } else {
         // Muestra la pantalla de pérdida
         ctx.fillStyle = '#000';
